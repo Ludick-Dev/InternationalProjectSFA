@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Language Website</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function updateLetter() {
+                $.ajax({
+                url: '/get_letter',
+                type: 'GET',
+                success: function(data) {
+                    $('#letter').text('Letter: ' + data);
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                complete: function() {
+                    setTimeout(updateLetter, 1000); // Update every 1 seconds
+                }
+                });
+            }
+
+            updateLetter();
+            });
+
+            function updateSentence() {
+            fetch('/get_sentence')
+                .then(response => response.json())
+                .then(data => {
+                const sentenceContainer = document.getElementById('sentence');
+                let sentence = '';
+
+                if (data.length > 0) {
+                    sentence = data.join('');
+                }
+
+                sentenceContainer.textContent = 'Sentence: ' + sentence;
+                });
+            }
+
+            setInterval(updateSentence, 3000);
+    </script>
+</head>
+<body>
+    <h1>Sign Language Website</h1>
+    <img src="{{ url_for('video_feed') }}" width="640" height="480">
+    <h1 id="letter">Letter: </h1>
+    <ul id="sentence"></ul>
+</body>
+</html>
