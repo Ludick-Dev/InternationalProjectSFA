@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="Style.css" />
+    <script
+      src="https://kit.fontawesome.com/c3fb602223.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function updateLetter() {
+                $.ajax({
+                    url: '/get_letter',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#letter').text('Letter: ' + data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    },
+                    complete: function() {
+                        setTimeout(updateLetter, 500); // Update every 3 seconds
+                    }
+                });
+            }
+
+            updateLetter();
+
+            function updateSentence() {
+                fetch('/get_sentence')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sentence = data.join('');  // Join the letters into a sentence
+                        $('#sentence').text('Sentence: ' + sentence);
+                    });
+            }
+
+            setInterval(updateSentence, 3000);
+
+            function startVideoCapture() {
+                document.getElementById('video-feed').src = "{{ url_for('video_feed') }}";
+                $.ajax({
+                    url: '/start_video_capture',
+                    type: 'POST',
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            function clearSentence() {
+                $.ajax({
+                    url: '/clear_sentence',
+                    type: 'POST',
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            $('#start-video-button').click(startVideoCapture);
+            $('#clear-sentence-button').click(clearSentence);
+        });
+    </script>
+    <style>
+      /*Different fonts*/
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@800&family=Poppins:wght@300;400;500;600;700;800;900&family=Roboto+Slab:wght@700&family=Secular+One&family=Tilt+Neon&display=swap");
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--scroll-padding);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: #000;
+  background: url("{{ url_for('static', filename='images/BackgroundImg.webp') }}");
+  background-size: cover;
+  background-attachment: fixed;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.6s;
+  padding: 40px 100px;
+  z-index: 100000;
+}
+header.sticky {
+  padding: 5px 100px;
+  background: #fff;
+}
+header .logo {
+  position: relative;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  font-size: 2em;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: 0.6s;
+}
+header ul {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+header ul li {
+  position: relative;
+  list-style: none;
+}
+header ul li a {
+  position: relative;
+  margin: 0 15px;
+  text-decoration: none;
+  color: #fff;
+  letter-spacing: 2px;
+  font-weight: 500px;
+  transition: 0.6s;
+}
+header.sticky .logo {
+  color: #000;
+}
+header.sticky ul li a {
+  color: #000;
+}
+header.sticky .checkbtn {
+  color: #000;
+}
+.Translation-Section {
+  margin-top: 10%;
+}
+.TextBox {
+  background-color: white;
+  color: black;
+}
+.TextBox p {
+  text-align: left;
+}
+
+/*---------Styling for the Grid----------*/
+
+/* Footer */
+footer {
+  height: 60px;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  background-color: rgb(33, 34, 34);
+  margin-top: 5%;
+}
+
+#homeText {
+  background-color: black;
+  color: #fff;
+  padding-left: 10%;
+  padding-right: 10%;
+  margin-top: 1%;
+  opacity: 0.7;
+  font-weight: 500px;
+}
+
+#aboutText {
+  background-color: rgb(33, 34, 34);
+  color: #fff;
+  padding-left: 10%;
+  padding-right: 10%;
+  margin-left: 1%;
+  margin-right: 1%;
+  margin-top: 5%;
+  opacity: 0.7;
+}
+
+/*-----------------------------More Info Styling-----------------------------*/
+.More_Info {
+  margin-top: 15%;
+  margin-bottom: 10%;
+}
+.Heading1 {
+  color: white;
+  text-align: center;
+  font-size: 40px;
+}
+.subheading {
+  color: white;
+  text-align: center;
+  font-size: 20px;
+}
+.container2 {
+  display: flex;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+.box1 p {
+  margin-top: 20%;
+  padding: 15px;
+}
+.box1 {
+  width: 50vw;
+  height: 50vh;
+}
+.box2 {
+  width: 50vw;
+  height: 50vh;
+}
+.box2 img {
+  width: 45vw;
+  height: 50vh;
+  opacity: 0.7;
+  border-radius: 10px;
+}
+.box1,
+.box2 {
+  margin: 8px;
+}
+/*---------------------------------------------------------------*/
+.container3 {
+  display: flex;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+.box4 {
+  width: 50vw;
+  height: 50vh;
+}
+.box4 p {
+  padding: 1%;
+}
+.box4 ul li {
+  padding: 0.5%;
+}
+.box3 {
+  width: 50vw;
+  height: 50vh;
+}
+.box3 img {
+  width: 45vw;
+  height: 60vh;
+  opacity: 0.7;
+  border-radius: 10px;
+}
+.box3,
+.box4 {
+  margin: 8px;
+}
+.box4 ul li {
+  color: white;
+}
+
+.container5 {
+  display: flex;
+  margin-left: 10%;
+}
+
+.video-container5 {
+  width: 20%;
+  position: relative;
+  width: 640px;
+  height: 480px;
+  margin-left: 6%;
+  background-color: grey;
+}
+
+.video-container5 video {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+}
+
+.text-box5 {
+  width: 640px;
+  height: 480px;
+  padding: 1%;
+  margin-left: 2%;
+  background-color: #fff;
+}
+#txttest{
+  text-align: center;
+}
+#letter{
+  margin-top: 30px;
+  font-size: 60px;
+}
+#sentence{
+  margin-top: 40px;
+  margin-bottom: 40px;
+  font-size: 30px;
+}
+#clear-sentence-button{
+  background-color: black;
+  color: white;
+  border-radius: 30px;
+  height: 60px;
+  width: 170px;
+  border: none;
+  font-size: 20px;
+}
+#start-video-button{
+  background-color: white;
+  border-radius: 30px;
+  height: 60px;
+  width: 170px;
+  border: none;
+  margin-left: 38%;
+  font-size: 20px;
+}
+.aText {
+  padding-left: 4%;
+  padding-right: 3%;
+  margin-bottom: 5%;
+}
+/*---------------------------------------------------------------------------*/
+
+/*-----------------------------Home Section----------------------------------*/
+.home-text {
+  color: rgba(255, 255, 255, 1);
+  height: auto;
+  position: absolute;
+  font-size: 20px;
+  font-style: Regular;
+  text-align: left;
+  font-family: Outfit;
+  font-weight: 400;
+  line-height: 27.5px;
+  font-stretch: normal;
+  text-decoration: none;
+}
+#home {
+  margin-top: 5%;
+}
+.desktop1-object-other07 {
+  top: 1.96376371383667px;
+  left: 540px;
+  width: 525px;
+  height: 477px;
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.desktop1-object-other071 {
+  top: 0px;
+  left: 25.55288314819336px;
+  width: 525px;
+  height: 477px;
+  position: absolute;
+}
+.desktop1-object-other17 {
+  top: 134.101806640625px;
+  left: 0px;
+  width: 524px;
+  height: 474.3597717285156px;
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.desktop1-object-other171 {
+  top: 0px;
+  left: 0px;
+  width: 524px;
+  height: 474px;
+  position: absolute;
+}
+
+    </style>
+  </head>
+  <body>
+    <!------------------------NavBar Section------------------------->
+    <header>
+      <a href="#" class="logo">Translate Sign!</a>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#Translate_Section">Translate</a></li>
+        <li><a href="#More_Info">More Info</a></li>
+        <li><a href="#About_Us">About Us</a></li>
+      </ul>
+    </header>
+    <!--------------------------------------------------------------->
+
+    <!-- --------------------------Home--------------------------- -->
+    <section class="Home" id="home">
+      <br />
+      <br />
+      <div id="homeText">
+        <h1 class="Heading1">Sign To Text Translation</h1>
+        <p class="subheading">
+          The future of breaking the barrier between sign language
+          communication.
+        </p>
+        <section class="container2">
+          <section class="box1">
+            <p>
+              Welcome to Sign For All, the cutting-edge sign language to text
+              conversion tool developed in collaboration with Fontys and PXL.
+              Our goal is to make communication more accessible and inclusive
+              for people who use sign language as their primary means of
+              communication.
+            </p>
+          </section>
+          <aside class="box 2">
+            <img src="{{ url_for('static', filename='images/Other 07.png') }}" alt="Image 1" />
+          </aside>
+        </section>
+        <br />
+        <p>
+          Our program uses advanced artificial intelligence and computer vision
+          techniques to interpret and translate sign language gestures into
+          written text in real-time. This means that our tool can help bridge
+          the communication gap between sign language users and non-sign
+          language users, enabling them to communicate more easily and
+          effectively. Sign For All is easy to use and can be accessed through a
+          variety of devices, including smartphones, tablets, and computers.
+        </p>
+        <section class="container2">
+          <aside>
+            <img src="{{ url_for('static', filename='images/Other 17.png') }}" alt="Image 2" />
+          </aside>
+          <section class="box1">
+            <p>
+              MediaPipe is an open-source cross-platform framework for building
+              multimodal machine learning applications, designed to process and
+              analyze perceptual data such as video and audio streams.
+            </p>
+          </section>
+        </section>
+      </div>
+    </section>
+    <!--------------------------------------------------------------->
+
+    <!---------------------Translation Section----------------------->
+    <section class="Translation-Section" id="Translate_Section">
+      <h1 class="Heading1">Translate Here!</h1>
+      <div class="container5">
+        <div class="video-container5">
+          <div id="container1">
+            <img id="video-feed" width="640" height="480">
+            <button id="start-video-button">Start Video Capture</button>
+          </div>
+        </div>
+        <div class="text-box5">
+          <p id ="txttest">Translation Text Here (Example of where the text must be)</p>
+          <h1 id="letter">Letter: </h1>
+          <h4 id="sentence">Sentence: </h4>
+          <button id="clear-sentence-button">Clear Sentence</button>
+        </div>
+      </div>
+    </section>
+    <!--------------------------------------------------------------->
+
+    <!--------------------------More Info---------------------------->
+    <br />
+    <br />
+    <section class="More_Info" id="More_Info">
+      <h1 class="Heading1">Learning Sign Language</h1>
+      <div class="container2">
+        <section class="box1">
+          <p style="color: white">
+            The future of the breaking the barrier between sign language
+            communication. The goal of creating this application is to help deaf
+            people speak with normal people with ease, and vice versa.
+          </p>
+        </section>
+        <aside class="box2">
+          <img src="{{ url_for('static', filename='images/ASL_Image.jpg') }}" alt="" srcset="ASL Picture" />
+        </aside>
+      </div>
+
+      <br />
+      <h1 class="Heading1">Don't know where to start?</h1>
+      <div class="container3">
+        <section class="box3">
+          <img src="{{ url_for('static', filename='images/ASL Image.jpg') }}" alt="Image 3" srcset="" />
+        </section>
+        <aside class="box4">
+          <p style="color: white">
+            If you didn't know where to start, let's make it simple. Learn the
+            alphabet. Although it might seem daunting and tedious in the
+            beginning, learning the alphabet is the most crucial part.
+          </p>
+          <br />
+          <p style="color: white">
+            Below are some links that can be used as resources to learn sign
+            language:
+          </p>
+          <ul>
+            <li>
+              <a
+                href="https://www.startasl.com/"
+                style="color: antiquewhite"
+                target="_blank"
+                >Start ASL</a
+              >
+              - This website offers a variety of resources for learning ASL,
+              including online courses, a dictionary, and articles on deaf
+              culture. They also have a YouTube channel with video lessons
+            </li>
+            <li>
+              <a
+                href="http://lifeprint.com/asl101/"
+                style="color: antiquewhite"
+                target="_blank"
+                >ASL University</a
+              >
+              - This website offers free online ASL lessons, including video
+              tutorials and printable resources. The lessons cover vocabulary,
+              grammar, and syntax, as well as deaf culture.
+            </li>
+            <li>
+              <a
+                href="https://www.youtube.com/c/ASLMeredith"
+                style="color: antiquewhite"
+                target="_blank"
+                >ASL Meredith</a
+              >
+              - This YouTube channel offers video lessons on ASL, ranging from
+              beginner to advanced levels. The lessons cover vocabulary,
+              grammar, and syntax, as well as tips for practicing and using ASL
+              in real-world situations.
+            </li>
+            <li>
+              <a
+                href="https://www.signingsavvy.com/"
+                style="color: antiquewhite"
+                target="_blank"
+                >Signing Savvy</a
+              >
+              - This website offers a dictionary of ASL signs, as well as video
+              lessons and quizzes to help you practice your skills. They also
+              have a blog with tips and resources for learning and using ASL.
+            </li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+    <!---------------------------------------------------------------->
+
+    <!-- -------------------------About Us------------------------ -->
+    <br />
+    <br />
+    <br />
+    <section class="About-Us" id="About_Us">
+      <h1 class="Heading1">About Us</h1>
+      <div id="aboutText">
+        <h2>Belgium Campus</h2>
+        <p class="aText">
+          <b>Mission:</b> To supply the industry with highly qualified and
+          experienced Information Technology personnel by providing
+          high-quality, practice-orientated education and training of an
+          International standard. We know this will contribute to economic
+          growth and wealth creation. <br />
+          <br />
+
+          Belgium Campus iTversity is at the forefront of what a modern
+          university should be. By investing in people, attracting investors,
+          running community programmes and engaging with local communities and
+          authorities, we ensure that this sentiment is adhered to. We conduct
+          our operations in the spirit of ubuntu – for the benefit of all.
+          <br />
+          <br />
+          <b>Vision:</b> To transform South Africa into a prosperous nation.
+          There is a great demand for highly skilled graduates with the right
+          competencies, and higher education has a big role to play in this
+          development process. We realise we have to do things differently from
+          other universities. The strategy of a university should and must make
+          a significant impact on regional development by cooperating with
+          industry and business and by educating and delivering the required
+          workforce on all levels.
+          <br />
+        </p>
+        <h2>Fontys University of Applied Sciences</h2>
+        <p class="aText">
+          Development is a key concept at Fontys. Young people develop their
+          talents as students with us, we develop relevant practical knowledge,
+          working professionals can also develop further at Fontys, we respond
+          flexibly to far-reaching social developments and – last but not least
+          – within our community we develop ourselves by sharing knowledge and
+          skills. <br />
+          <br />
+
+          We operate in the heart of society. In our hybrid learning and
+          research environments, students, lecturers, researchers, and
+          professionals work together. In that way, education and research, as
+          well as learning and working, become increasingly intertwined. Our
+          main social value is therefore the development of talent and
+          knowledge. <br />
+          <br />
+
+          Fontys is a multidisciplinary university of applied sciences in the
+          south of the Netherlands. Together with and for the (regional)
+          professional environments, we provide high-quality, higher vocational
+          education and conduct innovative, practice-oriented research. In this
+          way, we contribute to the development of a dynamic, inclusive, and
+          sustainable society. <br />
+          <br />
+        </p>
+        <h2>PXL University of Applied Sciences and Arts</h2>
+        <p class="aText">
+          <b>Mission:</b> PXL University of Applied Sciences professionalizes
+          people and organizations and thus contributes to prosperity and
+          well-being. <br />
+          <br />
+          <b>Vision:</b>Through a strong intertwining of education, research,
+          services and the practice of the arts, PXL University of Applied
+          Sciences wants its students (junior colleagues) and employees to grow
+          further as excellent professionals (= X-factor) and, together with its
+          partners, to grow as an excellent professional organization (=
+          X-factor). We translate the PXL vision into the X-factor that is a
+          model for the 'excellent professional' and for the 'excellent
+          professional organization'. We always use 'excellent' in combination
+          (-) with 'professional' because we do not strive for excellence per
+          se, but for 'excellent professional'. The X-factor is a combination of
+          (em)passion, of being enterprising and innovative, of
+          (multi)disciplinarity and of (international) collaboration (network)
+          working. The X-factor with its 4 overlapping axes, forms a single and
+          indivisible whole of hard and soft skills and is more than the sum of
+          its parts. The X-factor has a double effect. It is both our
+          'look-pointer' and our 'compass'. The look-pointer for
+          (self)reflection indicates where we stand at the start, the compass
+          shows us the way to the ultimate goal, the excellent professional /
+          professional organization. The X-factor is not only a look-pointer and
+          a compass for our junior colleagues, our staff and network, but also
+          for PXL University of Applied Sciences, as a beacon in its pursuit of
+          an excellent professional organization (= X-factor)
+          <br />
+        </p>
+      </div>
+    </section>
+    <!---------------------------------------------------------------->
+  </body>
+
+  <script src="Script.js"></script>
+</html>

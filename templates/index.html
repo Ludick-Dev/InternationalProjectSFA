@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenCV Website</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function updateLetter() {
+                $.ajax({
+                    url: '/get_letter',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#letter').text('Letter: ' + data);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    },
+                    complete: function() {
+                        setTimeout(updateLetter, 100); // Update every 3 seconds
+                    }
+                });
+            }
+
+            updateLetter();
+
+            function updateSentence() {
+                fetch('/get_sentence')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sentence = data.join('');  // Join the letters into a sentence
+                        $('#sentence').text('Sentence: ' + sentence);
+                    });
+            }
+
+            setInterval(updateSentence, 3000);
+
+            function startVideoCapture() {
+                document.getElementById('video-feed').src = "{{ url_for('video_feed') }}";
+                $.ajax({
+                    url: '/start_video_capture',
+                    type: 'POST',
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            function clearSentence() {
+                $.ajax({
+                    url: '/clear_sentence',
+                    type: 'POST',
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+
+            $('#start-video-button').click(startVideoCapture);
+            $('#clear-sentence-button').click(clearSentence);
+        });
+    </script>
+</head>
+<body>
+    <h1>OpenCV Website</h1>
+    <button id="start-video-button">Start Video Capture</button>
+    <br><br>
+    <img id="video-feed" width="640" height="480">
+    <h1 id="letter">Letter: </h1>
+    <h4 id="sentence">Sentence: </h4>
+    <button id="clear-sentence-button">Clear Sentence</button>
+</body>
+</html>
+
+
+
